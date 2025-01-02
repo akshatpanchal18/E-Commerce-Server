@@ -26,8 +26,8 @@ const options = {
   httpOnly: true,
   secure: true,
   // secure: false,
-  // sameSite: "None",
-  sameSite: 'strict',
+  sameSite: "None",
+  // sameSite: 'strict',
   path: "/",
 };
 
