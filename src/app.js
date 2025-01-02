@@ -20,8 +20,8 @@ app.use(
     cors({
       origin: (origin, callback) => {
         const allowedOrigins = process.env.CORS_ORIGIN.split(',').map((url) => url.trim());
-        console.log('Incoming Origin:', origin);
-        console.log('Allowed Origins:', allowedOrigins);
+        // console.log('Incoming Origin:', origin);
+        // console.log('Allowed Origins:', allowedOrigins);
   
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true); // Allow the origin
