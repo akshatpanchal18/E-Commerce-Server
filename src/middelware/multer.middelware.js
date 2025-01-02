@@ -1,5 +1,6 @@
 import multer from "multer";
 import fs from 'fs';
+import path from 'path';
 
 const tempDir = path.join(__dirname, 'public', 'temp');
 
