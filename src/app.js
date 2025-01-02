@@ -23,13 +23,14 @@ app.use(
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true); // Allow the origin
         } else {
+            console.error(`CORS blocked origin: ${origin}`);
           callback(new Error('Not allowed by CORS')); // Reject the origin
         }
       },
       credentials: true, // Allow credentials (cookies, authorization headers, etc.)
     })
   );
-  
+  console.log('Allowed Origins:', process.env.CORS_ORIGIN.split(','));
 
 app.use(express.json({limit:"5mb"}))
 
