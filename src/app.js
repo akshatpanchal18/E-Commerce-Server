@@ -19,18 +19,21 @@ const io = new Server(server, {
 app.use(
     cors({
       origin: (origin, callback) => {
-        const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+        const allowedOrigins = process.env.CORS_ORIGIN.split(',').map((url) => url.trim());
+        console.log('Incoming Origin:', origin);
+        console.log('Allowed Origins:', allowedOrigins);
+  
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true); // Allow the origin
         } else {
-            console.error(`CORS blocked origin: ${origin}`);
-          callback(new Error('Not allowed by CORS')); // Reject the origin
+          console.error(`CORS blocked origin: ${origin}`);
+          callback(new Error('Not allowed by CORS'));
         }
       },
-      credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+      credentials: true, // Allow credentials
     })
   );
-  console.log('Allowed Origins:', process.env.CORS_ORIGIN.split(','));
+  
 
 app.use(express.json({limit:"5mb"}))
 
