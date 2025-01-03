@@ -140,7 +140,33 @@ export const userLogin = asyncHandeler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .json(new apiResponse(200, findUser, "user logged in successfully"));
 });
+export const adminLogin = asyncHandeler(async (req,res) => {
+  const { email, password } = req.body;
 
+  if (!email || !password) {
+    throw new apiError(400, "email or password missing");
+  }
+  const findUser = await User.findOne({ "userInfo.email": email })
+  if (!findUser) {
+    throw new apiError(404, "User not found");
+    // res.status(404).json(new apiError(404,"User not found"))
+  }
+
+  const isPasswordValid = await bcrypt.compare(
+    password,
+    findUser.userInfo.password
+  );
+  if (!isPasswordValid) {
+    throw new apiError(401, "Invalid user credentials");
+    // res.status(401).json(new apiError(401,"Inavalid Password"))
+  }
+  const {accessToken} = await generateUserToken(findUser._id);
+  res
+  .status(200)
+  .cookie("AdminToken", accessToken, options)
+  .json(new apiResponse(200, findUser, "Admin logged in successfully"));
+  
+})
 export const userLogout = asyncHandeler(async (req, res) => {
   const user_id = req.user?._id;
   if (!user_id) {

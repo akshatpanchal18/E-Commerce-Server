@@ -24,12 +24,12 @@ export const verifyJwt = asyncHandeler(async (req,res,next) => {
 
 export const verifyAdmin = asyncHandeler(async (req,res,next) => {
     const adminID = "676157e96fd7f4736f576087";
-    const cookieToken = req.cookies.token
+    const cookieToken = req.cookies.AdminToken
     if (!cookieToken) {
         throw new apiError(400,"Unathorized request")
     }
     try {
-        const decodeToken = jwt.verify(cookieToken,process.env.TOKEN_SECRET)
+        const decodeToken = jwt.verify(cookieToken,process.env.ACCESS_TOKEN_SECRET)
         if (decodeToken?._id !== adminID) {
             throw new apiError(405,'Access Denaied')
         }
