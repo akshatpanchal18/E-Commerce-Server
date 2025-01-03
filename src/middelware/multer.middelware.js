@@ -1,14 +1,16 @@
 import multer from "multer";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import pkg from 'cloudinary';
+const { v2: cloudinary } = pkg;
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "./public/temp")
-    },
-    filename: function (req, file, cb) {
-      
-      cb(null, file.originalname)
-    }
-  })
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "products", // Folder in Cloudinary
+    resource_type: "auto", // Automatically determine the resource type (image, video, etc.)
+  },
+});
+
 
 export const upload = multer({
   storage,

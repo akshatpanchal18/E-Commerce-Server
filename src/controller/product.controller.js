@@ -3,7 +3,6 @@ import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import {deleteImageFromCloudinaryByUrl, uploadOnCloudinery} from "../utils/cloudinary.js";
 import { Product } from "../models/product.models.js";
-import { log } from "console";
 
 
 export const addProduct = asyncHandeler(async (req,res) => {
@@ -26,25 +25,15 @@ export const addProduct = asyncHandeler(async (req,res) => {
       ) {
         throw new apiError(400, "All fields are required");
       }
-      if (!imagePath) {
-        throw new apiError(400,"image path not found")
+    if (!req.file || !req.file.path) {
+        throw new apiError(400, "Image file is required");
       }
-
-      const image = await uploadOnCloudinery(imagePath)
-      if (!image) {
-        throw new apiError(400, "Failed to upload image");
-      }
-      console.log("Image URL:", image.url);
-    
-      
-      if (!image) {
-        throw new apiError(400,"image is required")
-      }
+      const imageUrl = req.file.path;
       const product = await Product.create({
         name,
         description,
         category,
-        image:image.url,
+        image:imageUrl,
         brand,
         stock,
         price,
