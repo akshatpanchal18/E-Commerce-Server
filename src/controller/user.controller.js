@@ -19,11 +19,15 @@ const generateUserToken = async (user_id) => {
 const options = {
   httpOnly: true,
   secure: true,
-  // secure: false,
   sameSite: "None",
-  // sameSite: 'strict',
   path: "/",
   maxAge: 10 * 24 * 60 * 60 * 1000,
+};
+const logoutOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "None",
+  path: "/",
 };
 
 export const createUser = asyncHandeler(async (req, res) => {
@@ -155,7 +159,7 @@ export const userLogout = asyncHandeler(async (req, res) => {
     throw new apiError(404, "user not found");
   }
   res.status(200)
-  .clearCookie("userToken", options)
+  .clearCookie("userToken", logoutOptions)
   .json(new apiResponse(200,{},"user logged out"))
 });
 export const adminLogout = asyncHandeler(async (req, res) => {
@@ -164,7 +168,7 @@ export const adminLogout = asyncHandeler(async (req, res) => {
     throw new apiError(404, "user not found");
   }
   res.status(200)
-  .clearCookie("AdminToken", options)
+  .clearCookie("AdminToken", logoutOptions)
   .json(new apiResponse(200,{},"user logged out"))
 });
 
