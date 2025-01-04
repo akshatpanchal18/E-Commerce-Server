@@ -52,18 +52,6 @@ const userSchema = new Schema({
 
 },{timestamps:true})
 
-userSchema.methods.generateToken = function(){
-    return jwt.sign(
-        {
-            _id: this._id,
-            // email: this.userInfo.email,
-        },
-        process.env.TOKEN_SECRET,
-        {
-            expiresIn: process.env.TOKEN_EXPIRY
-        }
-    )
-    }
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign(
         {

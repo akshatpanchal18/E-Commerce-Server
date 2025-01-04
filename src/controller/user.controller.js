@@ -10,11 +10,6 @@ const generateUserToken = async (user_id) => {
   try {
     const user = await User.findById(user_id);
     const accessToken = user.generateAccessToken();
-
-    // console.log("Access",accesstoken);
-    // console.log("token",token);
-    
-    (user.token = accessToken), await user.save({ validateBeforeSave: false });
     return {accessToken};
   } catch (error) {
     throw new apiError(500, "something went Wrong while genrate token");
@@ -122,18 +117,6 @@ export const userLogin = asyncHandeler(async (req, res) => {
   }
 
   const {accessToken} = await generateUserToken(findUser._id);
-  // const {token} = await generateUserToken(findUser._id);
-  // console.log("Access:",accessToken);
-  //   console.log("token:",token);
-
-
-  // const options = {
-  //   httpOnly: true,
-  //   secure: true,
-  //   // secure: false,
-  //   sameSite: "None",
-  //   path: "/",
-  // };
   res
     .status(200)
     .cookie("userToken", accessToken, options)
@@ -171,23 +154,17 @@ export const userLogout = asyncHandeler(async (req, res) => {
   if (!user_id) {
     throw new apiError(404, "user not found");
   }
-  await User.findByIdAndUpdate(user_id, {
-    $unset: {
-      token: 1,
-    },
-  },{
-    new:true
-  }
-);
-// const options = {
-//     httpOnly: true,
-//     secure: true,
-//     sameSite: 'None',
-//     path: '/',
-//     // secure: false,
-//   };
   res.status(200)
-  .clearCookie("token", options)
+  .clearCookie("userToken", options)
+  .json(new apiResponse(200,{},"user logged out"))
+});
+export const adminLogout = asyncHandeler(async (req, res) => {
+  const user_id = req.user?._id;
+  if (!user_id) {
+    throw new apiError(404, "user not found");
+  }
+  res.status(200)
+  .clearCookie("AdminToken", options)
   .json(new apiResponse(200,{},"user logged out"))
 });
 
@@ -227,17 +204,6 @@ export const reGenrateToken = asyncHandeler(async (req, res) => {
 
     // Generate new tokens
     const {accessToken} = await generateUserToken(user?._id);
-    // user.token = access_token;
-    // await user.save({ validateBeforeSave: false });
-
-    // const options = {
-    //   httpOnly: true,
-    //   secure: true,
-    //   // secure: false,
-    //   sameSite: "None",
-    //   path: "/",
-    // };
-
     res
       .status(200)
       .cookie("userToken", accessToken, options)
