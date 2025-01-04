@@ -185,37 +185,3 @@ export const verify = asyncHandeler(async (req, res) => {
   
   res.status(200).json({ message: "Verified" });
 });
-
-export const reGenrateToken = asyncHandeler(async (req, res) => {
-  const accesstoken = req.cookies.userToken;
-// console.log(accesstoken);
-
-  if (!accesstoken) {
-    throw new apiError(401, "Unauthorized Request: No access token provided.");
-  }
-
-  try {
-    const decodeAccessToken = jwt.verify(accesstoken, process.env.ACCESS_TOKEN_SECRET);
-    const user = await User.findById(decodeAccessToken?._id);
-
-    if (!user) {
-      throw new apiError(401, "Invalid Access Token: User not found.");
-    }
-
-    if (accesstoken !== user?.token) {
-      throw new apiError(401, "Unauthorized: Token expired or invalid.");
-    }
-
-    // Generate new tokens
-    const {accessToken} = await generateUserToken(user?._id);
-    res
-      .status(200)
-      .cookie("userToken", accessToken, options)
-      .json(new apiResponse(200, user, "Token refreshed successfully."));
-  } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      throw new apiError(401, "Malformed JWT: Access token is invalid.");
-    }
-    throw error; // Re-throw other errors
-  }
-});
