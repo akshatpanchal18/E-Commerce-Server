@@ -10,7 +10,7 @@ export const verifyJwt = asyncHandeler(async (req,res,next) => {
         throw new apiError(400,"Unathorized request")
     }
     try {
-        const decodeToken = jwt.verify(cookieToken,process.env.TOKEN_SECRET) 
+        const decodeToken = jwt.verify(cookieToken,process.env.ACCESS_TOKEN_SECRET) 
         const user = await User.findById(decodeToken?._id)
         if (!user) {
             throw new apiError(404,'Invalid Token')
