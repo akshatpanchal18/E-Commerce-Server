@@ -9,14 +9,13 @@ import { deleteImageFromCloudinaryByUrl } from "../utils/cloudinary.js";
 const generateUserToken = async (user_id) => {
   try {
     const user = await User.findById(user_id);
-    const token = user.generateToken();
     const accessToken = user.generateAccessToken();
 
     // console.log("Access",accesstoken);
     // console.log("token",token);
     
     (user.token = accessToken), await user.save({ validateBeforeSave: false });
-    return {token,accessToken};
+    return {accessToken};
   } catch (error) {
     throw new apiError(500, "something went Wrong while genrate token");
   }
@@ -29,6 +28,7 @@ const options = {
   sameSite: "None",
   // sameSite: 'strict',
   path: "/",
+  maxAge: 10 * 24 * 60 * 60 * 1000,
 };
 
 export const createUser = asyncHandeler(async (req, res) => {
@@ -121,7 +121,7 @@ export const userLogin = asyncHandeler(async (req, res) => {
     // res.status(401).json(new apiError(401,"Inavalid Password"))
   }
 
-  const {token, accessToken} = await generateUserToken(findUser._id);
+  const {accessToken} = await generateUserToken(findUser._id);
   // const {token} = await generateUserToken(findUser._id);
   // console.log("Access:",accessToken);
   //   console.log("token:",token);
@@ -136,8 +136,7 @@ export const userLogin = asyncHandeler(async (req, res) => {
   // };
   res
     .status(200)
-    .cookie("token", token, options)
-    .cookie("accessToken", accessToken, options)
+    .cookie("userToken", accessToken, options)
     .json(new apiResponse(200, findUser, "user logged in successfully"));
 });
 export const adminLogin = asyncHandeler(async (req,res) => {
@@ -227,7 +226,7 @@ export const reGenrateToken = asyncHandeler(async (req, res) => {
     }
 
     // Generate new tokens
-    const { token, accessToken} = await generateUserToken(user?._id);
+    const {accessToken} = await generateUserToken(user?._id);
     // user.token = access_token;
     // await user.save({ validateBeforeSave: false });
 
@@ -241,8 +240,7 @@ export const reGenrateToken = asyncHandeler(async (req, res) => {
 
     res
       .status(200)
-      .cookie("token", token, options)
-      .cookie("accessToken", accessToken, options)
+      .cookie("userToken", accessToken, options)
       .json(new apiResponse(200, user, "Token refreshed successfully."));
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {

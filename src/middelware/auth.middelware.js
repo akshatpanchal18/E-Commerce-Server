@@ -4,7 +4,7 @@ import asyncHandeler from "../utils/asyncHandeler.js";
 import jwt from 'jsonwebtoken'
 
 export const verifyJwt = asyncHandeler(async (req,res,next) => {
-    const cookieToken = req.cookies.token
+    const cookieToken = req.cookies.userToken
 
     if (!cookieToken) {
         throw new apiError(400,"Unathorized request")
