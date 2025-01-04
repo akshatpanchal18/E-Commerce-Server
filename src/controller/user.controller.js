@@ -123,7 +123,7 @@ export const userLogin = asyncHandeler(async (req, res) => {
   const {accessToken} = await generateUserToken(findUser._id);
   res
     .status(200)
-    .clearCookie("userToken") // Clear previous user token
+    // .clearCookie("userToken") // Clear previous user token
     .cookie("userToken", accessToken, options)
     .json(new apiResponse(200, findUser, "user logged in successfully"));
 });
@@ -150,7 +150,7 @@ export const adminLogin = asyncHandeler(async (req,res) => {
   const {accessToken} = await generateUserToken(findUser._id);
   res
   .status(200)
-  .clearCookie("AdminToken") // Clear previous admin token
+  // .clearCookie("AdminToken") // Clear previous admin token
   .cookie("AdminToken", accessToken, options)
   .json(new apiResponse(200, findUser, "Admin logged in successfully"));
   
