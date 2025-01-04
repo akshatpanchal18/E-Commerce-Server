@@ -227,7 +227,7 @@ export const reGenrateToken = asyncHandeler(async (req, res) => {
     }
 
     // Generate new tokens
-    const { token, access_token } = await generateUserToken(user?._id);
+    const { token, accessToken} = await generateUserToken(user?._id);
     // user.token = access_token;
     // await user.save({ validateBeforeSave: false });
 
@@ -242,7 +242,7 @@ export const reGenrateToken = asyncHandeler(async (req, res) => {
     res
       .status(200)
       .cookie("token", token, options)
-      .cookie("accessToken", access_token, options)
+      .cookie("accessToken", accessToken, options)
       .json(new apiResponse(200, user, "Token refreshed successfully."));
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
