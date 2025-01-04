@@ -206,7 +206,7 @@ export const verify = asyncHandeler(async (req, res) => {
 });
 
 export const reGenrateToken = asyncHandeler(async (req, res) => {
-  const accesstoken = req.cookies.accessToken;
+  const accesstoken = req.cookies.userToken;
 // console.log(accesstoken);
 
   if (!accesstoken) {
