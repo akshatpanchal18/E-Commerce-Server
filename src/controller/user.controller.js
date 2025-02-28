@@ -10,7 +10,7 @@ const generateUserToken = async (user_id) => {
   try {
     const user = await User.findById(user_id);
     const accessToken = user.generateAccessToken();
-    return {accessToken};
+    return { accessToken };
   } catch (error) {
     throw new apiError(500, "something went Wrong while genrate token");
   }
@@ -58,20 +58,17 @@ export const createUser = asyncHandeler(async (req, res) => {
     // res.status(400).json(new apiError(400,"All fields are require"))
   }
   const existingUser = await User.findOne({
-    $or: [
-      { "userInfo.email": email },
-      { "userInfo.contact_no": contact_no },
-    ],
+    $or: [{ "userInfo.email": email }, { "userInfo.contact_no": contact_no }],
   });
-  
+
   if (existingUser) {
     if (existingUser.userInfo.email === email) {
       throw new apiError(409, "Email already exists");
-       // res.status(409).json(new apiError(409,"Email already exists"))
+      // res.status(409).json(new apiError(409,"Email already exists"))
     }
     if (existingUser.userInfo.contact_no === contact_no) {
       throw new apiError(409, "Contact number already exists");
-       // res.status(409).json(new apiError(409,"contact no. already exists"))
+      // res.status(409).json(new apiError(409,"contact no. already exists"))
     }
   }
 
@@ -105,7 +102,7 @@ export const userLogin = asyncHandeler(async (req, res) => {
   if (!email || !password) {
     throw new apiError(400, "email or password missing");
   }
-  const findUser = await User.findOne({ "userInfo.email": email })
+  const findUser = await User.findOne({ "userInfo.email": email });
   if (!findUser) {
     throw new apiError(404, "User not found");
     // res.status(404).json(new apiError(404,"User not found"))
@@ -120,20 +117,20 @@ export const userLogin = asyncHandeler(async (req, res) => {
     // res.status(401).json(new apiError(401,"Inavalid Password"))
   }
 
-  const {accessToken} = await generateUserToken(findUser._id);
+  const { accessToken } = await generateUserToken(findUser._id);
   res
     .status(200)
     // .clearCookie("userToken") // Clear previous user token
     .cookie("userToken", accessToken, options)
     .json(new apiResponse(200, findUser, "user logged in successfully"));
 });
-export const adminLogin = asyncHandeler(async (req,res) => {
+export const adminLogin = asyncHandeler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     throw new apiError(400, "email or password missing");
   }
-  const findUser = await User.findOne({ "userInfo.email": email })
+  const findUser = await User.findOne({ "userInfo.email": email });
   if (!findUser) {
     throw new apiError(404, "User not found");
     // res.status(404).json(new apiError(404,"User not found"))
@@ -147,43 +144,42 @@ export const adminLogin = asyncHandeler(async (req,res) => {
     throw new apiError(401, "Invalid user credentials");
     // res.status(401).json(new apiError(401,"Inavalid Password"))
   }
-  const {accessToken} = await generateUserToken(findUser._id);
+  const { accessToken } = await generateUserToken(findUser._id);
   res
-  .status(200)
-  // .clearCookie("AdminToken") // Clear previous admin token
-  .cookie("AdminToken", accessToken, options)
-  .json(new apiResponse(200, findUser, "Admin logged in successfully"));
-  
-})
+    .status(200)
+    // .clearCookie("AdminToken") // Clear previous admin token
+    .cookie("AdminToken", accessToken, options)
+    .json(new apiResponse(200, findUser, "Admin logged in successfully"));
+});
 export const userLogout = asyncHandeler(async (req, res) => {
-  const user_id = req.user?._id;
-  if (!user_id) {
-    throw new apiError(404, "user not found");
-  }
-  res.status(200)
-  .clearCookie("userToken", logoutOptions)
-  .json(new apiResponse(200,{},"user logged out"))
+  // const user_id = req.user?._id;
+  // if (!user_id) {
+  //   throw new apiError(404, "user not found");
+  // }
+  res
+    .status(200)
+    .clearCookie("userToken", logoutOptions)
+    .json(new apiResponse(200, {}, "user logged out"));
 });
 export const adminLogout = asyncHandeler(async (req, res) => {
-  const user_id = req.user?._id;
-  if (!user_id) {
-    throw new apiError(404, "user not found");
-  }
-  res.status(200)
-  .clearCookie("AdminToken", logoutOptions)
-  .json(new apiResponse(200,{},"user logged out"))
+  // const user_id = req.user?._id;
+  // if (!user_id) {
+  //   throw new apiError(404, "user not found");
+  // }
+  res
+    .status(200)
+    .clearCookie("AdminToken", logoutOptions)
+    .json(new apiResponse(200, {}, "user logged out"));
 });
 
-export const getCurrentUser = asyncHandeler(async (req,res) => {
-    const user = req.user
-    if (!user) {
-        throw new apiError(404, "User not found")
-    }
-    res.status(200)
-    .json(new apiResponse(200,user,"User found"))
-})
+export const getCurrentUser = asyncHandeler(async (req, res) => {
+  const user = req.user;
+  if (!user) {
+    throw new apiError(404, "User not found");
+  }
+  res.status(200).json(new apiResponse(200, user, "User found"));
+});
 
 export const verify = asyncHandeler(async (req, res) => {
-  
   res.status(200).json({ message: "Verified" });
 });
